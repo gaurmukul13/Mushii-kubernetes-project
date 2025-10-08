@@ -1,4 +1,5 @@
 # Mushii-kubernetes-project
+project for github and k8
 my-python-app/
 │
 ├── app/
