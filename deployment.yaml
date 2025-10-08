@@ -1,0 +1,7 @@
+apiVersion: apps/V1
+kind: Deployment
+metadata:
+  name: myapp
+  
+
+  
