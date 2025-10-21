@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pro K8s Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+  <nav class="bg-blue-700 p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-white font-bold text-xl">Pro-K8s App</h1>
+      <span class="text-blue-200">Docker + Kubernetes Demo</span>
+    </div>
+  </nav>
+
+  <section class="text-center py-10 bg-blue-100">
+    <h2 class="text-3xl font-bold mb-2">Welcome to My Kubernetes Project 🚀</h2>
+    <p class="text-gray-700">This app is deployed with Docker, Kubernetes, Postgres, Redis & Ingress</p>
+  </section>
+
+  <section class="container mx-auto my-10 p-6 bg-white rounded-xl shadow-md">
+    <h3 class="text-xl font-semibold mb-4">Add a New User</h3>
+    <form id="userForm" class="flex gap-4">
+      <input type="text" id="username" placeholder="Enter username"
+        class="flex-grow border border-gray-300 rounded-lg p-2" required />
+      <button type="submit"
+        class="bg-blue-600 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded-lg">Add User</button>
+    </form>
+  </section>
+
+  <section class="container mx-auto my-10 p-6 bg-white rounded-xl shadow-md">
+    <h3 class="text-xl font-semibold mb-4">Users List</h3>
+    <button onclick="fetchUsers()"
+      class="mb-4 bg-green-600 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded-lg">
+      Refresh List
+    </button>
+    <table class="w-full border-collapse border border-gray-300">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="border border-gray-300 px-4 py-2">ID</th>
+          <th class="border border-gray-300 px-4 py-2">Username</th>
+        </tr>
+      </thead>
+      <tbody id="usersTable"></tbody>
+    </table>
+  </section>
+
+  <footer class="bg-blue-700 text-white text-center py-4">
+    <p>Made with ❤️ using Docker & Kubernetes</p>
+  </footer>
+
+  <script>
+    const API_URL = "http://192.168.49.2:32085/api/users";
+
+
+    document.getElementById("userForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username }),
+      });
+      if (res.ok) {
+        document.getElementById("username").value = "";
+        fetchUsers();
+      } else {
+        alert("Error adding user!");
+      }
+    });
+
+  async function fetchUsers() {
+  const res = await fetch(API_URL);
+  const data = await res.json();        // data = {users: [...]}
+  const users = data.users || [];       // ab array mil rahi hai
+  const table = document.getElementById("usersTable");
+  table.innerHTML = "";
+  users.forEach((u) => {
+    table.innerHTML += `<tr>
+      <td class="border border-gray-300 px-4 py-2">${u.id}</td>
+      <td class="border border-gray-300 px-4 py-2">${u.username}</td>
+    </tr>`;
+  });
+}
+
+    
+
+    fetchUsers();
+  </script>
+</body>
+</html>
