@@ -52,7 +52,8 @@
   </footer>
 
   <script>
-    const API_URL = "http://192.168.49.2:32085/api/users";
+    const API_URL = "http://backend-service:5000/api/users";
+
 
 
     document.getElementById("userForm").addEventListener("submit", async (e) => {
@@ -66,26 +67,25 @@
       if (res.ok) {
         document.getElementById("username").value = "";
         fetchUsers();
-      } else {
-        alert("Error adding user!");
-      }
+      } 
     });
 
-  async function fetchUsers() {
-  const res = await fetch(API_URL);
-  const data = await res.json();        // data = {users: [...]}
-  const users = data.users || [];       // ab array mil rahi hai
-  const table = document.getElementById("usersTable");
-  table.innerHTML = "";
-  users.forEach((u) => {
-    table.innerHTML += `<tr>
-      <td class="border border-gray-300 px-4 py-2">${u.id}</td>
-      <td class="border border-gray-300 px-4 py-2">${u.username}</td>
-    </tr>`;
-  });
+ async function fetchUsers() {
+ const res = await fetch(API_URL);
+ if (!res.ok) {
+ alert("Failed to fetch users");
+ return;
+ }
+ const users = await res.json(); // backend returns array directly
+ const table = document.getElementById("usersTable");
+ table.innerHTML = "";
+ users.forEach((u) => {
+ table.innerHTML += `<tr>
+ <td class="border border-gray-300 px-4 py-2">${u.id}</td>
+ <td class="border border-gray-300 px-4 py-2">${u.username}</td>
+ </tr>`;
+ });
 }
-
-    
 
     fetchUsers();
   </script>
