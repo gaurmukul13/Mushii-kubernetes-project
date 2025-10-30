@@ -12,34 +12,21 @@ spec:
       labels:
         app: backend
     spec:
-      initContainers:
-      - name: init-db
-        image: postgres:15
-        command:
-          [
-            "sh",
-            "-c",
-            "until pg_isready -h postgres-service -p 5432; do echo waiting for db; sleep 2; done; psql -h postgres-service -U postgres -d postgres -c \"CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, username TEXT);\""
-          ]
-        env:
-          - name: PGPASSWORD
-            value: "password"
-
       containers:
-      - name: backend
-        image: backend:latest
-        imagePullPolicy: Never
-        ports:
-          - containerPort: 5000
-        env:
-          - name: POSTGRES_HOST
-            value: "postgres-service"
-          - name: POSTGRES_USER
-            value: "postgres"
-          - name: POSTGRES_PASSWORD
-            value: "password"
-          - name: REDIS_HOST
-            value: "redis-service"
+        - name: backend
+          image: backend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+          env:
+            - name: POSTGRES_HOST
+              value: "postgres-service"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "postgres"
 ---
 apiVersion: v1
 kind: Service
@@ -49,7 +36,6 @@ spec:
   selector:
     app: backend
   ports:
-    - protocol: TCP
-      port: 5000       # The port exposed inside the cluster
-      targetPort: 5000 # The port your container listens on
-  type: NodePort       # Kubernetes will assign a random NodePort automatically
+    - port: 5000
+      targetPort: 5000
+  type: NodePort
